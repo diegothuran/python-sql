@@ -8,13 +8,15 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "8000:8000"
     build:
-        context: ./python
-        dockerfile: Dockerfile
+      context: ./python
+      dockerfile: Dockerfile
     depends_on:
-        - db
+      - db
     volumes:
-        - ./python/scripts:/usr/src/app/
+      - ./python:/usr/src/app/
     networks:
       - mynetwork
   db:
@@ -27,30 +29,9 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "6033:3306"
-    volumes:
-      - ./config/my.conf:/etc/mysql/conf.d/config-file.cnf
-      - dbdata:/var/lib/mysql
-      - dblog:/var/log/mysql
-      - ./init:/docker-entrypoint-initdb.d
     networks:
       - mynetwork
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
-    depends_on:
-      - db
-    environment:
-      PMA_HOST: db
-      PMA_PORT: 3306
-      PMA_ARBITRARY: 1
-    restart: always
-    ports:
-      - 8081:80
-    networks:
-      - mynetwork
-volumes:
-  dbdata: {}
-  dblog: {}
+
 networks:
   mynetwork:
     driver: bridge

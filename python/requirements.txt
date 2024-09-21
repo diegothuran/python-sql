@@ -1,3 +1,4 @@
-setuptools
-python-ldap
-mysql-connector-python
+fastapi
+uvicorn
+sqlalchemy
+pydantic

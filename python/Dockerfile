@@ -1,30 +1,16 @@
-FROM python:3.9.7
+# Dockerfile
+FROM python:3.11-slim
 
 WORKDIR /usr/src/app
 
-RUN  apt-get update && apt-get install -y \ 
-    libsasl2-dev \
-    python-dev \
-    libldap2-dev \
-    libssl-dev
+# Copie o requirements.txt para instalar as dependências
+COPY requirements.txt .
 
-COPY requirements.txt ./
+# Instale as dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copie o restante do código
 COPY . .
-COPY scripts/ /scripts/
 
-RUN groupadd -r python && useradd -r -g python python
-
-RUN pwd \
-    ls /usr/src/app/scripts/hello.py -la
-
-RUN apt-get update \ 
-    && apt-get install -y apt-transport-https \
-    && apt-get install mariadb-client -y
-
-USER python
-
-RUN cd scripts
-
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+# Comando para iniciar a aplicação
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
